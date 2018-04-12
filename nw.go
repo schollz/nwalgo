@@ -11,7 +11,7 @@ var (
 	None byte = 4
 )
 
-func Align(a, b string, match, mismatch, gap int) (alignA, alignB string, score int) {
+func Align(a, b []byte, match, mismatch, gap int) (alignA, alignB []byte, score int) {
 
 	aLen := len(a) + 1
 	bLen := len(b) + 1
@@ -92,7 +92,7 @@ func Align(a, b string, match, mismatch, gap int) (alignA, alignB string, score 
 	reverse(aBytes)
 	reverse(bBytes)
 
-	return string(aBytes), string(bBytes), score
+	return aBytes, bBytes, score
 }
 
 func reverse(a []byte) {
