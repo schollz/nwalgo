@@ -11,10 +11,6 @@ var (
 	None byte = 4
 )
 
-func idx(i, j, bLen int) int {
-	return (i * bLen) + j
-}
-
 func Align(a, b string, match, mismatch, gap int) (alignA, alignB string, score int) {
 
 	aLen := len(a) + 1
@@ -32,12 +28,12 @@ func Align(a, b string, match, mismatch, gap int) (alignA, alignB string, score 
 	pointer := make([]byte, aLen*bLen)
 
 	for i := 1; i < aLen; i++ {
-		f[idx(i, 0, bLen)] = gap * i
-		pointer[idx(i, 0, bLen)] = Up
+		f[i*bLen] = gap * i
+		pointer[i*bLen] = Up
 	}
 	for j := 1; j < bLen; j++ {
-		f[idx(0, j, bLen)] = gap * j
-		pointer[idx(0, j, bLen)] = Left
+		f[j] = gap * j
+		pointer[j] = Left
 	}
 
 	pointer[0] = None
@@ -48,10 +44,10 @@ func Align(a, b string, match, mismatch, gap int) (alignA, alignB string, score 
 			if a[i-1] == b[j-1] {
 				matchMismatch = match
 			}
-
-			max := f[idx(i-1, j-1, bLen)] + matchMismatch
-			hgap := f[idx(i-1, j, bLen)] + gap
-			vgap := f[idx(i, j-1, bLen)] + gap
+			//(i * bLen) + j
+			max := f[((i-1)*bLen)+j-1] + matchMismatch
+			hgap := f[((i-1)*bLen)+j] + gap
+			vgap := f[(i*bLen)+j-1] + gap
 
 			if hgap > max {
 				max = hgap
@@ -67,17 +63,16 @@ func Align(a, b string, match, mismatch, gap int) (alignA, alignB string, score 
 				p = Left
 			}
 
-			pointer[idx(i, j, bLen)] = p
-			f[idx(i, j, bLen)] = max
+			pointer[(i*bLen)+j] = p
+			f[(i*bLen)+j] = max
 		}
 	}
 
 	i := aLen - 1
 	j := bLen - 1
 
-	score = f[idx(i, j, bLen)]
-
-	for p := pointer[idx(i, j, bLen)]; p != None; p = pointer[idx(i, j, bLen)] {
+	score = f[(i*bLen)+j]
+	for p := pointer[(i*bLen)+j]; p != None; p = pointer[(i*bLen)+j] {
 		if p == NW {
 			aBytes = append(aBytes, a[i-1])
 			bBytes = append(bBytes, b[j-1])
